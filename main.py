@@ -1,15 +1,17 @@
 from keep_alive import keep_alive
-keep_alive()
-
+from threading import Thread
 import requests
 from bs4 import BeautifulSoup
 import time
-import os
 
-TOKEN = os.environ['TELEGRAM_TOKEN']
-CHAT_ID = os.environ['CHAT_ID']
+# 🔐 Telegram-Zugangsdaten
+TOKEN = '7642753536:AAGvC7tCzTw2wYal9Ng2d0fvI5_AyCSaRIc'
+CHAT_ID = '7934241910'
 
+# 🌐 Deine Such-URL
 URL = 'https://www.kleinanzeigen.de/s-80939/preis::100/motorroller/k0l16357r30'
+
+# 🧠 Merkt sich gesendete Anzeigen
 gesehene_urls = set()
 
 def sende_telegram_nachricht(text):
@@ -45,9 +47,14 @@ def suche_neue_anzeigen():
             print(f'➡️ Neue Anzeige geschickt: {titel}')
             time.sleep(1)
 
-while True:
-    try:
-        suche_neue_anzeigen()
-    except Exception as e:
-        print(f'⚠️ Fehler: {e}')
-    time.sleep(60)
+def bot_loop():
+    while True:
+        try:
+            suche_neue_anzeigen()
+        except Exception as e:
+            print(f'⚠️ Fehler: {e}')
+        time.sleep(60)  # Alle 60 Sekunden neu prüfen
+
+# 🔁 Start
+keep_alive()
+Thread(target=bot_loop).start()
